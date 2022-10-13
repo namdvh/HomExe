@@ -35,7 +35,7 @@ namespace HomExe.Api.Controllers
 
         // POST api/<UserController>
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(LoginRequestDTO user)
+        public async Task<ActionResult<User>> Login([FromBody]LoginRequestDTO user)
         {
             var us=_context.Users.Where(x=>x.UserName==user.UserName && x.Password==user.Password).FirstOrDefault();
             if (us== null)
@@ -45,7 +45,7 @@ namespace HomExe.Api.Controllers
             return us;
         }
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(RegisterDTO user)
+        public async Task<ActionResult<User>> Register([FromBody]RegisterDTO user)
         {
             var us = _context.Users.Where(x => x.UserName == user.UserName && x.Password == user.Password).FirstOrDefault();
             if (us != null)
@@ -57,7 +57,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, User us)
+        public async Task<IActionResult> Put([FromRoute]int id,[FromBody] User us)
         {
             if (id != us.UserId)
             {
@@ -85,7 +85,7 @@ namespace HomExe.Api.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete([FromRoute]int id)
         {
         }
         private bool UserExist(int id)

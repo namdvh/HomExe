@@ -17,8 +17,8 @@ namespace HomExe.Api.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<Contract> Get(int userId)
+        [HttpGet("user")]
+        public async Task<Contract> GetContractForUser([FromRoute]int userId)
         {
             var con = await _context.Contracts.FirstOrDefaultAsync(x => x.UserId == userId);
 
@@ -26,9 +26,19 @@ namespace HomExe.Api.Controllers
             return con;
         }
 
+        //[Route("{ptId}")]
+        [HttpGet("pt")]
+        public async Task<List<Contract>> GetContractForPt([FromRoute] int ptId)
+        {
+            var con = await _context.Contracts.Where(x=>x.PtId == ptId).ToListAsync();
+
+
+            return con;
+        }
+
 
         [HttpPost]
-        public async Task<IActionResult> Create(ContractDTO request)
+        public async Task<IActionResult> Create([FromBody] ContractDTO request)
         {
             var con = new Contract
             {
@@ -53,56 +63,6 @@ namespace HomExe.Api.Controllers
 
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Contract con)
-        {
-            if (id != con.ContractId)
-            {
-                return BadRequest();
-            }
-            _context.Entry(con).State = EntityState.Modified;
-
-            var rs = await _context.SaveChangesAsync();
-            if (rs > 0)
-            {
-                return Ok();
-
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-        }
-
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var con = await _context.Contracts.FirstOrDefaultAsync(x => x.ContractId == id);
-
-            if (con.Status.Equals("1"))
-            {
-                con.Status = "0";
-            }
-            else
-            {
-                con.Status = "1";
-            }
-
-            _context.Contracts.Update(con);
-            var rs = await _context.SaveChangesAsync();
-            if (rs > 0)
-            {
-                return Ok();
-            }
-            else
-            {
-
-                return BadRequest();
-            }
-
-        }
+       
     }
 }

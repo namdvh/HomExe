@@ -8,7 +8,6 @@ namespace HomExe.ViewModels.Contracts
 {
     public class ContractDTO
     {
-        public int? ContractId { get; set; }
         public int UserId { get; set; }
         public int PtId { get; set; }
         public string CreatedDate { get; set; } 

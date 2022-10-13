@@ -5,7 +5,6 @@ namespace HomExe.Data
 {
     public partial class Contract
     {
-        public int ContractId { get; set; }
         public int UserId { get; set; }
         public int PtId { get; set; }
         public string CreatedDate { get; set; } = null!;

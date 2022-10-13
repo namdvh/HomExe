@@ -25,18 +25,32 @@ namespace HomExe.Api.Controllers
             return ptList;
         }
 
-        [HttpGet("{id}")]
-        public async Task<Pt> Get(int id)
+        //[Route("{ptId}")]
+        [HttpGet("detail")]
+        public async Task<Pt> GetPtById([FromRoute]int ptId)
         {
-            var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == id);
+            var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == ptId);
 
            
             return pt;
         }
+        
+        //[Route("{userId}")]
+        [HttpGet("user")]
+        public Task<Pt> GetPtForUser([FromRoute]int userId)
+        {
+            var pt = (from con in _context.Contracts
+                            join _pt in _context.Pts on con.PtId equals _pt.PtId
+                            where con.UserId == userId
+                            select _pt);
+
+
+            return (Task<Pt>)pt;
+        }
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(PtDTO request)
+        public async Task<IActionResult> Create([FromBody]PtDTO request)
         {
             var pt = new Pt
             {
@@ -65,7 +79,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Pt pt)
+        public async Task<IActionResult> Put([FromRoute]int id,[FromBody] Pt pt)
         {
             if (id != pt.PtId)
             {
@@ -88,7 +102,7 @@ namespace HomExe.Api.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == id);
 
