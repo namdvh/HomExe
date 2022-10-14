@@ -22,16 +22,16 @@ namespace HomExe.Api.Controllers
             List<Recipee> recList = new();
             recList = await _context.Recipees.ToListAsync();
 
-            return recList;
+            return Ok(recList);
         }
 
         [HttpGet("{id}")]
-        public async Task<Recipee> Get([FromRoute]int id)
+        public async Task<ActionResult<Recipee>> Get(int id)
         {
             var rec = await _context.Recipees.FirstOrDefaultAsync(x => x.RecipeId == id);
 
 
-            return rec;
+            return Ok(rec);
         }
 
 
@@ -61,7 +61,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Recipee rec)
+        public async Task<IActionResult> Put(int id, [FromBody] Recipee rec)
         {
             if (id != rec.RecipeId)
             {
@@ -84,7 +84,7 @@ namespace HomExe.Api.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete( int id)
         {
             var rec = await _context.Recipees.FirstOrDefaultAsync(x => x.RecipeId == id);
 

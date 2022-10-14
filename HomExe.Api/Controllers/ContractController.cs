@@ -18,22 +18,22 @@ namespace HomExe.Api.Controllers
 
 
         [HttpGet("user")]
-        public async Task<Contract> GetContractForUser([FromRoute]int userId)
+        public async Task<ActionResult<Contract>> GetContractForUser(int userId)
         {
             var con = await _context.Contracts.FirstOrDefaultAsync(x => x.UserId == userId);
 
 
-            return con;
+            return Ok(con);
         }
 
         //[Route("{ptId}")]
         [HttpGet("pt")]
-        public async Task<List<Contract>> GetContractForPt([FromRoute] int ptId)
+        public async Task<ActionResult<List<Contract>>> GetContractForPt( int ptId)
         {
             var con = await _context.Contracts.Where(x=>x.PtId == ptId).ToListAsync();
 
 
-            return con;
+            return Ok(con);
         }
 
 

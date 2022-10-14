@@ -23,14 +23,21 @@ namespace HomExe.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return Ok();
+            List<User> userList = new();
+            userList = await _context.Users.ToListAsync();
+
+            return Ok(userList);
         }
+    
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<User>> Get(int id)
         {
-            return "value";
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+
+
+            return Ok(user);
         }
 
         // POST api/<UserController>
@@ -57,7 +64,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute]int id,[FromBody] User us)
+        public async Task<IActionResult> Put(int id,[FromBody] User us)
         {
             if (id != us.UserId)
             {
@@ -85,8 +92,31 @@ namespace HomExe.Api.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete([FromRoute]int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+
+            if (user.Status.Equals("1"))
+            {
+                user.Status = "0";
+            }
+            else
+            {
+                user.Status = "1";
+            }
+
+            _context.Users.Update(user);
+            var rs = await _context.SaveChangesAsync();
+            if (rs > 0)
+            {
+                return Ok();
+            }
+            else
+            {
+
+                return BadRequest();
+            }
+
         }
         private bool UserExist(int id)
         {

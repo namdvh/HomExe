@@ -17,26 +17,26 @@ namespace HomExe.Api.Controllers
 
         //[Route("{userId}")]
         [HttpGet("user")]
-        public Task<Schedule> GetScheduleForUser([FromRoute]int userId)
+        public async Task<ActionResult<Schedule>> GetScheduleForUser(int userId)
         {
-            var sche = (from con in _context.Contracts
+            var sche = await (from con in _context.Contracts
                         join pt in _context.Pts on con.PtId equals pt.PtId
                         join schedule in _context.Schedules on pt.PtId equals schedule.PtId
                         where con.UserId == userId
-                        select schedule);
+                        select schedule).FirstOrDefaultAsync();
 
 
-            return (Task<Schedule>)sche;
+            return Ok(sche);
         }
         
         //[Route("{ptId}")]
         [HttpGet("pt")]
-        public async Task<Schedule> GetScheduleForPt([FromRoute]int ptId)
+        public async Task<ActionResult<Schedule>> GetScheduleForPt(int ptId)
         {
             var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == ptId);
 
 
-            return sche;
+            return Ok(sche);
         }
 
 
@@ -44,7 +44,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int ptId,[FromBody] Schedule sche)
+        public async Task<IActionResult> Put(int ptId,[FromBody] Schedule sche)
         {
             if (ptId != sche.PtId)
             {

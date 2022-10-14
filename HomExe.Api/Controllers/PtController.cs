@@ -17,35 +17,80 @@ namespace HomExe.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Pt>>> GetList()
+        public async Task<ActionResult<IEnumerable<PtDTO>>> GetList()
         {
             List<Pt> ptList = new();
             ptList = await _context.Pts.ToListAsync();
+            List<PtDTO> ptDTOs = new();
+            foreach (var pt in ptList)
+            {
+                var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == pt.PtId);
+                var dto = new PtDTO{
+                    PtId = pt.PtId,
+                    Email = pt.Email,
+                    UserName = pt.UserName,
+                    Password = pt.Password,
+                    Phone = pt.Phone,
+                    CategoryId = pt.CategoryId,
+                    LinkMeet = pt.LinkMeet,
+                    Status = pt.Status,
+                    Schedule = sche.Date
+                        };
+                ptDTOs.Add(dto);
 
-            return ptList;
+            }
+
+            return Ok(ptDTOs);
         }
 
         //[Route("{ptId}")]
         [HttpGet("detail")]
-        public async Task<Pt> GetPtById([FromRoute]int ptId)
+        public async Task<ActionResult<PtDTO>> GetPtById(int ptId)
         {
             var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == ptId);
+            var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == ptId);
+            var dto = new PtDTO
+            {
+                PtId = pt.PtId,
+                Email = pt.Email,
+                UserName = pt.UserName,
+                Password = pt.Password,
+                Phone = pt.Phone,
+                CategoryId = pt.CategoryId,
+                LinkMeet = pt.LinkMeet,
+                Status = pt.Status,
+                Schedule = sche.Date
+            };
 
-           
-            return pt;
+
+            return Ok(dto);
         }
         
         //[Route("{userId}")]
         [HttpGet("user")]
-        public Task<Pt> GetPtForUser([FromRoute]int userId)
+        public async Task<ActionResult<PtDTO>> GetPtForUser(int userId)
         {
-            var pt = (from con in _context.Contracts
+            var pt = await (from con in _context.Contracts
                             join _pt in _context.Pts on con.PtId equals _pt.PtId
                             where con.UserId == userId
-                            select _pt);
+                            select _pt).FirstOrDefaultAsync();
+
+            var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == pt.PtId);
+            var dto = new PtDTO
+            {
+                PtId = pt.PtId,
+                Email = pt.Email,
+                UserName = pt.UserName,
+                Password = pt.Password,
+                Phone = pt.Phone,
+                CategoryId = pt.CategoryId,
+                LinkMeet = pt.LinkMeet,
+                Status = pt.Status,
+                Schedule = sche.Date
+            };
 
 
-            return (Task<Pt>)pt;
+            return Ok(dto);
         }
 
 
@@ -65,7 +110,16 @@ namespace HomExe.Api.Controllers
 
             _context.Pts.Add(pt);
             var rs = await _context.SaveChangesAsync();
-            if (rs > 0)
+
+            var sche = new Schedule
+            {
+                Date = request.Schedule,
+                PtId = pt.PtId
+            };
+
+            _context.Schedules.Add(sche);
+            var rsSche = await _context.SaveChangesAsync();
+            if (rs > 0 && rsSche > 0)
             {
                 return Ok();
             }
@@ -79,7 +133,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute]int id,[FromBody] Pt pt)
+        public async Task<IActionResult> Put(int id,[FromBody] Pt pt)
         {
             if (id != pt.PtId)
             {
@@ -102,7 +156,7 @@ namespace HomExe.Api.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute]int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == id);
 
