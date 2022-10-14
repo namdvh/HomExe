@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomExe.Data
 {
-    public partial class Contract
+    public class Contract
     {
         public int UserId { get; set; }
         public int PtId { get; set; }

@@ -23,9 +23,10 @@ namespace HomExe.Api.Controllers
         {
             BaseResponse<Contract> response = new();
             var con = await _context.Contracts.FirstOrDefaultAsync(x => x.UserId == userId);
-
-            if(con != null)
+            if (con != null)
             {
+                var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == con.PtId);
+
                 response.Code = "200";
                 response.Message = "Get contract for user successfully";
                 response.Data = con;
@@ -43,17 +44,25 @@ namespace HomExe.Api.Controllers
 
         //[Route("{ptId}")]
         [HttpGet("pt")]
-        public async Task<IActionResult> GetContractForPt( int ptId)
+        public async Task<IActionResult> GetContractForPt(int ptId)
         {
             BaseResponse<List<Contract>> response = new();
 
-            var con = await _context.Contracts.Where(x=>x.PtId == ptId).ToListAsync();
+            var conList = await _context.Contracts.Where(x=>x.PtId == ptId).ToListAsync();
+            
 
-            if (con.Count != 0)
+            if (conList.Count != 0)
             {
+                var userList = new List<User>();
+                foreach (var con in conList)
+                {
+                    var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == con.UserId);
+                    userList.Add(user);
+
+                }
                 response.Code = "200";
                 response.Message = "Get contracts for pt successfully";
-                response.Data = con;
+                response.Data = conList;
 
             }
             else

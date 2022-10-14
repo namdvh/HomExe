@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomExe.Data
 {
-    public partial class Pt
+    public class Pt
     {
         public Pt()
         {

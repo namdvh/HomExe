@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomExe.Data
 {
-    public partial class Recipee
+    public class Recipee
     {
         public int RecipeId { get; set; }
         public string Pictures { get; set; } = null!;
