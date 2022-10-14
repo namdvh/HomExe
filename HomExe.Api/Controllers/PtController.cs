@@ -1,4 +1,5 @@
 ﻿using HomExe.Data;
+using HomExe.ViewModels.BaseResponse;
 using HomExe.ViewModels.Pts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,10 @@ namespace HomExe.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PtDTO>>> GetList()
+        public async Task<IActionResult> GetList()
         {
+            BaseResponse<List<PtDTO>> response = new();
+
             List<Pt> ptList = new();
             ptList = await _context.Pts.ToListAsync();
             List<PtDTO> ptDTOs = new();
@@ -39,64 +42,107 @@ namespace HomExe.Api.Controllers
                 ptDTOs.Add(dto);
 
             }
+            if(ptDTOs.Count > 0)
+            {
+                response.Code = "200";
+                response.Message = "Get list pts successfully";
+                response.Data = ptDTOs;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "List pts is empty";
+            }
 
-            return Ok(ptDTOs);
+            return Ok(response);
         }
 
         //[Route("{ptId}")]
         [HttpGet("detail")]
-        public async Task<ActionResult<PtDTO>> GetPtById(int ptId)
+        public async Task<IActionResult> GetPtById(int ptId)
         {
+            BaseResponse<PtDTO> response = new();
+
+
             var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == ptId);
             var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == ptId);
-            var dto = new PtDTO
+            if(pt != null && sche != null)
             {
-                PtId = pt.PtId,
-                Email = pt.Email,
-                UserName = pt.UserName,
-                Password = pt.Password,
-                Phone = pt.Phone,
-                CategoryId = pt.CategoryId,
-                LinkMeet = pt.LinkMeet,
-                Status = pt.Status,
-                Schedule = sche.Date
-            };
+                var dto = new PtDTO
+                {
+                    PtId = pt.PtId,
+                    Email = pt.Email,
+                    UserName = pt.UserName,
+                    Password = pt.Password,
+                    Phone = pt.Phone,
+                    CategoryId = pt.CategoryId,
+                    LinkMeet = pt.LinkMeet,
+                    Status = pt.Status,
+                    Schedule = sche.Date
+                };
+                response.Code = "200";
+                response.Message = "Get pt by id successfully";
+                response.Data = dto;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "Get pt by id failed";
+            }
 
 
-            return Ok(dto);
+            return Ok(response);
         }
         
         //[Route("{userId}")]
         [HttpGet("user")]
-        public async Task<ActionResult<PtDTO>> GetPtForUser(int userId)
+        public async Task<IActionResult> GetPtForUser(int userId)
         {
+            BaseResponse<PtDTO> response = new();
+
             var pt = await (from con in _context.Contracts
                             join _pt in _context.Pts on con.PtId equals _pt.PtId
                             where con.UserId == userId
                             select _pt).FirstOrDefaultAsync();
 
-            var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == pt.PtId);
-            var dto = new PtDTO
+            if (pt != null)
             {
-                PtId = pt.PtId,
-                Email = pt.Email,
-                UserName = pt.UserName,
-                Password = pt.Password,
-                Phone = pt.Phone,
-                CategoryId = pt.CategoryId,
-                LinkMeet = pt.LinkMeet,
-                Status = pt.Status,
-                Schedule = sche.Date
-            };
+                var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == pt.PtId);
+
+                var dto = new PtDTO
+                {
+                    PtId = pt.PtId,
+                    Email = pt.Email,
+                    UserName = pt.UserName,
+                    Password = pt.Password,
+                    Phone = pt.Phone,
+                    CategoryId = pt.CategoryId,
+                    LinkMeet = pt.LinkMeet,
+                    Status = pt.Status,
+                    Schedule = sche.Date
+                };
+
+                response.Code = "200";
+                response.Message = "Get pt by id successfully";
+                response.Data = dto;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "User do not have pt yet";
+            }
 
 
-            return Ok(dto);
+            return Ok(response);
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]PtDTO request)
         {
+
+            BaseResponse<string> response = new();
+
             var pt = new Pt
             {
                 Email = request.Email,
@@ -121,13 +167,15 @@ namespace HomExe.Api.Controllers
             var rsSche = await _context.SaveChangesAsync();
             if (rs > 0 && rsSche > 0)
             {
-                return Ok();
+                response.Code = "200";
+                response.Message = "Create pt successfully";
             }
             else
             {
-
-                return BadRequest();
+                response.Code = "201";
+                response.Message = "Create pt failed"; 
             }
+            return Ok(response);
 
         }
 
@@ -135,6 +183,8 @@ namespace HomExe.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id,[FromBody] Pt pt)
         {
+            BaseResponse<string> response = new();
+
             if (id != pt.PtId)
             {
                 return BadRequest();
@@ -144,13 +194,15 @@ namespace HomExe.Api.Controllers
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
-                return Ok();
-
+                response.Code = "200";
+                response.Message = "Edit pt successfully";
             }
             else
             {
-                return BadRequest();
+                response.Code = "201";
+                response.Message = "Edit pt failed";
             }
+            return Ok(response);
 
         }
 
@@ -158,6 +210,8 @@ namespace HomExe.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            BaseResponse<string> response = new();
+
             var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == id);
 
             if (pt.Status.Equals("1"))
@@ -173,13 +227,15 @@ namespace HomExe.Api.Controllers
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
-                return Ok();
+                response.Code = "200";
+                response.Message = "Delete pt successfully";
             }
             else
             {
-
-                return BadRequest();
+                response.Code = "201";
+                response.Message = "Delete pt failed";
             }
+            return Ok(response);
 
         }
     }

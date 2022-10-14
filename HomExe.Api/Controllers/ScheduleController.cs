@@ -1,4 +1,5 @@
 ﻿using HomExe.Data;
+using HomExe.ViewModels.BaseResponse;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,26 +18,54 @@ namespace HomExe.Api.Controllers
 
         //[Route("{userId}")]
         [HttpGet("user")]
-        public async Task<ActionResult<Schedule>> GetScheduleForUser(int userId)
+        public async Task<IActionResult> GetScheduleForUser(int userId)
         {
+            BaseResponse<Schedule> response = new();
+
             var sche = await (from con in _context.Contracts
                         join pt in _context.Pts on con.PtId equals pt.PtId
                         join schedule in _context.Schedules on pt.PtId equals schedule.PtId
                         where con.UserId == userId
                         select schedule).FirstOrDefaultAsync();
 
+            if(sche != null)
+            {
+                response.Code = "200";
+                response.Message = " Get schedule for user successfully";
+                response.Data = sche;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = " User do not have pt yet";
+            }
 
-            return Ok(sche);
+
+            return Ok(response);
         }
         
         //[Route("{ptId}")]
         [HttpGet("pt")]
-        public async Task<ActionResult<Schedule>> GetScheduleForPt(int ptId)
+        public async Task<IActionResult> GetScheduleForPt(int ptId)
         {
+            BaseResponse<Schedule> response = new();
+
             var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == ptId);
 
+            if (sche != null)
+            {
+                response.Code = "200";
+                response.Message = " Get schedule for pt successfully";
+                response.Data = sche;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = " Get schedule for pt failed";
+            }
 
-            return Ok(sche);
+
+            return Ok(response);
         }
 
 
@@ -46,6 +75,8 @@ namespace HomExe.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int ptId,[FromBody] Schedule sche)
         {
+            BaseResponse<string> response = new();
+
             if (ptId != sche.PtId)
             {
                 return BadRequest();
@@ -55,13 +86,15 @@ namespace HomExe.Api.Controllers
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
-                return Ok();
-
+                response.Code = "200";
+                response.Message = "Edit schedule successfully";
             }
             else
             {
-                return BadRequest();
+                response.Code = "201";
+                response.Message = "Edit schedule failed";
             }
+            return Ok(response);
 
         }
 

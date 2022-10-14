@@ -21,72 +21,134 @@ namespace HomExe.Api.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
+            BaseResponse<List<User>> response = new();
+
             List<User> userList = new();
             userList = await _context.Users.ToListAsync();
+            if (userList.Count > 0)
+            {
+                response.Code = "200";
+                response.Message = "Get users list successfully";
+                response.Data = userList;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "Users list is empty";
+            }
 
-            return Ok(userList);
+            return Ok(response);
         }
     
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
+            BaseResponse<User> response = new();
+
             var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (user != null)
+            {
+                response.Code = "200";
+                response.Message = "Get user successfully";
+                response.Data = user;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "Get user failed";
+            }
 
-
-            return Ok(user);
+            return Ok(response);
         }
 
         // POST api/<UserController>
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login([FromBody]LoginRequestDTO user)
+        public async Task<IActionResult> Login([FromBody]LoginRequestDTO user)
         {
-            var us=_context.Users.Where(x=>x.UserName==user.UserName && x.Password==user.Password).FirstOrDefault();
+            BaseResponse<User> response = new();
+
+            var us =_context.Users.Where(x=>x.UserName==user.UserName && x.Password==user.Password).FirstOrDefault();
             if (us== null)
             {
-                return NotFound();
+                response.Code = "201";
+                response.Message = "Username or password is incorrect";
             }
-            return us;
+            else
+            {
+                response.Code = "200";
+                response.Message = "Login successfully";
+                response.Data = us;
+            }
+            return Ok(response);
         }
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register([FromBody]RegisterDTO user)
+        public async Task<IActionResult> Register([FromBody]RegisterDTO user)
         {
-            var us = _context.Users.Where(x => x.UserName == user.UserName && x.Password == user.Password).FirstOrDefault();
-            if (us != null)
+            BaseResponse<string> response = new();
+
+            var existed = _context.Users.Where(x => x.UserName == user.UserName).FirstOrDefaultAsync();
+            if (existed == null)
             {
-                return NotFound();
+                var us = new User
+                {
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    Password = user.Password,
+                    Phone = user.Phone,
+                    Height = user.Height,
+                    Weight = user.Weight,
+                    Status = user.Status,
+                    RoleId = 1
+                };
+
+                _context.Users.Add(us);
+                var rs = await _context.SaveChangesAsync();
+                if (rs > 0)
+                {
+                    response.Code = "200";
+                    response.Message = "Regist successfully";
+                }
+                else
+                {
+                    response.Code = "201";
+                    response.Message = "Regist pt failed";
+                }
             }
-            return us;
+            else
+            {
+                response.Code = "202";
+                response.Message = "Username is already exist";
+            }
+            return Ok(response);
         }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id,[FromBody] User us)
         {
+            BaseResponse<string> response = new();
+
             if (id != us.UserId)
             {
                 return BadRequest();
             }
             _context.Entry(us).State = EntityState.Modified;
-            try
+            var rs = await _context.SaveChangesAsync();
+            if (rs > 0)
             {
-                await _context.SaveChangesAsync();
+                response.Code = "200";
+                response.Message = "Edit recipe successfully";
             }
-            catch (Exception)
+            else
             {
-                if (!UserExist(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                response.Code = "201";
+                response.Message = "Edit recipe failed";
             }
-            return NoContent();
+            return Ok(response);
 
         }
 
@@ -94,6 +156,8 @@ namespace HomExe.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            BaseResponse<string> response = new();
+
             var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
 
             if (user.Status.Equals("1"))
@@ -109,18 +173,17 @@ namespace HomExe.Api.Controllers
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
-                return Ok();
+                response.Code = "200";
+                response.Message = "Delete recipe successfully";
             }
             else
             {
-
-                return BadRequest();
+                response.Code = "201";
+                response.Message = "Delete recipe failed";
             }
+            return Ok(response);
 
-        }
-        private bool UserExist(int id)
-        {
-            return _context.Users.Any(e => e.UserId == id);
+
         }
     }
 }
