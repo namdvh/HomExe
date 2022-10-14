@@ -30,7 +30,7 @@ namespace HomExe.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-GFSC70P;Initial Catalog=HomExe;uid=sa;pwd=1;MultipleActiveResultSets=True;");
+                optionsBuilder.UseSqlServer("Server=bakeryrecipe.database.windows.net;Initial Catalog=HomExe;uid=bakeryrecipe;pwd=Admin@123;MultipleActiveResultSets=True;");
             }
         }
 
@@ -38,9 +38,11 @@ namespace HomExe.Data
         {
             modelBuilder.Entity<Contract>(entity =>
             {
+                entity.HasKey(e => e.UserId);
+
                 entity.ToTable("Contract");
 
-                entity.Property(e => e.ContractId).ValueGeneratedNever();
+                entity.Property(e => e.UserId).ValueGeneratedNever();
 
                 entity.Property(e => e.CreatedDate)
                     .HasMaxLength(50)
@@ -52,24 +54,22 @@ namespace HomExe.Data
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.HasOne(d => d.ContractNavigation)
-                    .WithOne(p => p.Contract)
-                    .HasForeignKey<Contract>(d => d.ContractId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Contract_User1");
-
                 entity.HasOne(d => d.Pt)
                     .WithMany(p => p.Contracts)
                     .HasForeignKey(d => d.PtId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Contract_PT");
+
+                entity.HasOne(d => d.User)
+                    .WithOne(p => p.Contract)
+                    .HasForeignKey<Contract>(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Contract_User1");
             });
 
             modelBuilder.Entity<Pt>(entity =>
             {
                 entity.ToTable("PT");
-
-                entity.Property(e => e.PtId).ValueGeneratedNever();
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
@@ -96,8 +96,6 @@ namespace HomExe.Data
 
                 entity.ToTable("PtCategory");
 
-                entity.Property(e => e.CategoryId).ValueGeneratedNever();
-
                 entity.Property(e => e.Category).HasMaxLength(50);
             });
 
@@ -106,8 +104,6 @@ namespace HomExe.Data
                 entity.HasKey(e => e.RecipeId);
 
                 entity.ToTable("Recipee");
-
-                entity.Property(e => e.RecipeId).ValueGeneratedNever();
 
                 entity.Property(e => e.Pictures).HasMaxLength(50);
 
@@ -126,16 +122,12 @@ namespace HomExe.Data
 
                 entity.ToTable("RecipeeCategory");
 
-                entity.Property(e => e.CategoryId).ValueGeneratedNever();
-
                 entity.Property(e => e.Category).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("Role");
-
-                entity.Property(e => e.RoleId).ValueGeneratedNever();
 
                 entity.Property(e => e.Role1)
                     .HasMaxLength(50)
@@ -146,7 +138,7 @@ namespace HomExe.Data
             {
                 entity.ToTable("Schedule");
 
-                entity.Property(e => e.ScheduleId).ValueGeneratedNever();
+                entity.Property(e => e.ScheduleId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Date).HasMaxLength(50);
 
@@ -160,8 +152,6 @@ namespace HomExe.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("User");
-
-                entity.Property(e => e.UserId).ValueGeneratedNever();
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 

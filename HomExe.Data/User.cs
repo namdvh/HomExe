@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace HomExe.Data
 {
@@ -15,7 +14,7 @@ namespace HomExe.Data
         public string? Weight { get; set; }
         public string Status { get; set; } = null!;
         public int RoleId { get; set; }
-        [JsonIgnore]
+
         public virtual Role Role { get; set; } = null!;
         public virtual Contract? Contract { get; set; }
     }

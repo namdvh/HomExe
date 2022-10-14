@@ -11,7 +11,7 @@ namespace HomExe.Data
         public string EndDate { get; set; } = null!;
         public string Status { get; set; } = null!;
 
-        public virtual User ContractNavigation { get; set; } = null!;
         public virtual Pt Pt { get; set; } = null!;
+        public virtual User User { get; set; } = null!;
     }
 }
