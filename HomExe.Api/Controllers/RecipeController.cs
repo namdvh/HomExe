@@ -127,7 +127,7 @@ namespace HomExe.Api.Controllers
 
             var rec = await _context.Recipees.FirstOrDefaultAsync(x => x.RecipeId == id);
 
-            _context.Recipees.Remove(rec);
+             _context.Recipees.Remove(rec);
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
