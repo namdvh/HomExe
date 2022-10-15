@@ -83,7 +83,6 @@ namespace HomExe.Api.Controllers
             {
                 UserId = request.UserId,
                 Problems = request.Problems
-                Target = request.Target
             };
 
             _context.HealthReports.Add(rp);
@@ -118,7 +117,6 @@ namespace HomExe.Api.Controllers
                 response.Message = "Not found that Report";
                 return Ok(response);
             }
-            x.Target = rp.Target;
             _context.HealthReports.Update(x);
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)

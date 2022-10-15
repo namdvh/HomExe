@@ -149,31 +149,7 @@ namespace HomExe.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] PtDTO request)
         {
-            var scopes = new[] { "https://graph.microsoft.com/.default" };
-            var tenantId = "9b1ab0a1-9c14-4f05-9600-7c6db921abdb";
-            var clientId = "f165b596-446c-4a29-9040-02476ad6c0c3";
-            var authority = "https://login.microsoftonline.com";
-            var redirectUrl = "https://localhost:5000";
-            var clientSecret = "wd88Q~4Fkjsd1a_f.NtNEr394rngmn9kMYIv4dya";
-            var options = new TokenCredentialOptions
-            {
-                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-            };
-            IConfidentialClientApplication app = ConfidentialClientApplicationBuilder
-              .Create(clientId)
-              .WithRedirectUri(redirectUrl)
-              .WithClientSecret(clientSecret)
-              //.WithAuthority(authority)
-              .Build();
-            var authenResult = await app.AcquireTokenByAuthorizationCode(scopes, clientId).ExecuteAsync();
-            GraphServiceClient graphServiceClient = new GraphServiceClient(new DelegateAuthenticationProvider(
-                async (request) =>
-                {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authenResult.AccessToken);
-                    await Task.Yield();
-                }
-                ));
-
+      
             BaseResponse<string> response = new();
 
             var pt = new Pt
@@ -202,13 +178,6 @@ namespace HomExe.Api.Controllers
             {
                 response.Code = "200";
                 response.Message = "Create pt successfully";
-                var onlineMeeting = new OnlineMeeting
-                {
-                    StartDateTime = DateTimeOffset.Now,
-                    EndDateTime = DateTimeOffset.Parse("2022-12-12T22:00:34.2464912+00:00"),
-                    Subject = "User Token Meeting"
-                };
-                await graphServiceClient.Me.OnlineMeetings.Request().AddAsync(onlineMeeting);
             }
             else
             {
@@ -289,4 +258,3 @@ namespace HomExe.Api.Controllers
         }
     }
 }
-pai
