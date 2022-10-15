@@ -41,7 +41,7 @@ namespace HomExe.Api.Controllers
 
             return Ok(response);
         }
-    
+
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
@@ -66,75 +66,69 @@ namespace HomExe.Api.Controllers
         }
 
         // POST api/<UserController>
-        [HttpPost("loginus")]
-        public async Task<IActionResult> LoginForUser([FromBody]LoginRequestDTO user)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDTO user)
         {
             BaseResponse<User> response = new();
 
-            var us =await _context.Users.Where(x=>x.UserName==user.UserName && x.Password==user.Password).FirstOrDefaultAsync();
-            if (us== null)
+            var us = await _context.Users.Where(x => x.UserName == user.UserName && x.Password == user.Password).FirstOrDefaultAsync();
+            if (us == null)
             {
-                response.Code = "201";
-                response.Message = "Username or password is incorrect";
+                BaseResponse<Pt> responsePt = new();
+
+                var pt = await _context.Pts.Where(x => x.UserName == user.UserName && x.Password == user.Password).FirstOrDefaultAsync();
+                if (pt == null)
+                {
+                    responsePt.Code = "201";
+                    responsePt.Message = "Username or password is incorrect";
+                }
+                else
+                {
+                    var cons = await _context.Contracts.Where(x => x.PtId == pt.PtId && !x.Status.Equals("0")).ToListAsync();
+                    if (cons.Count > 0)
+                    {
+                        var now = DateTime.Now.ToString("MM/dd/yyyy");
+                        foreach (var con in cons)
+                        {
+                            var endDate = DateTime.Parse(con.EndDate);
+                            if (endDate.ToString("MM/dd/yyyy").Equals(now))
+                            {
+                                _context.Contracts.Remove(con);
+                                await _context.SaveChangesAsync();
+                            }
+
+                        }
+                    }
+
+                    responsePt.Code = "200";
+                    responsePt.Message = "Login for PT successfully";
+                    responsePt.Data = pt;
+                }
+                return Ok(responsePt);
             }
             else
-            {         
+            {
                 var con = await _context.Contracts.Where(x => x.UserId == us.UserId && !x.Status.Equals("0")).FirstOrDefaultAsync();
                 var now = DateTime.Now.ToString("MM/dd/yyyy");
                 if (us.RoleId == 1 && con != null && DateTime.Parse(con.EndDate).ToString("MM/dd/yyyy").Equals(now))
                 {
-                        _context.Contracts.Remove(con);
-                        await _context.SaveChangesAsync();
+                    _context.Contracts.Remove(con);
+                    await _context.SaveChangesAsync();
                 }
-              
+
                 response.Code = "200";
-                response.Message = "Login successfully";
+                response.Message = "Login for user successfully";
                 response.Data = us;
             }
             return Ok(response);
         }
-        
-        [HttpPost("loginpt")]
-        public async Task<IActionResult> LoginForPT([FromBody]LoginRequestDTO _pt)
-        {
-            BaseResponse<Pt> response = new();
 
-            var pt =await _context.Pts.Where(x=>x.UserName==_pt.UserName && x.Password==_pt.Password).FirstOrDefaultAsync();
-            if (pt== null)
-            {
-                response.Code = "201";
-                response.Message = "Username or password is incorrect";
-            }
-            else
-            {         
-                var cons = await _context.Contracts.Where(x => x.PtId == pt.PtId && !x.Status.Equals("0")).ToListAsync();
-                if (cons.Count > 0)
-                {
-                    var now = DateTime.Now.ToString("MM/dd/yyyy");
-                    foreach (var con in cons)
-                    {
-                        var endDate = DateTime.Parse(con.EndDate);
-                        if (endDate.ToString("MM/dd/yyyy").Equals(now))
-                        {
-                            _context.Contracts.Remove(con);
-                            await _context.SaveChangesAsync();
-                        }
-
-                }
-                }
-
-                response.Code = "200";
-                response.Message = "Login successfully";
-                response.Data = pt;
-            }
-            return Ok(response);
-        }
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]RegisterDTO user)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO user)
         {
             BaseResponse<string> response = new();
 
-            var existed =await _context.Users.Where(x => x.UserName == user.UserName).FirstOrDefaultAsync();
+            var existed = await _context.Users.Where(x => x.UserName == user.UserName).FirstOrDefaultAsync();
             if (existed == null)
             {
                 var us = new User
@@ -172,7 +166,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,[FromBody] UserRequestDTO us)
+        public async Task<IActionResult> Put(int id, [FromBody] UserRequestDTO us)
         {
             BaseResponse<string> response = new();
 
