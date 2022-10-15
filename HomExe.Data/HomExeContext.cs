@@ -193,8 +193,6 @@ namespace HomExe.Data
             {
                 entity.ToTable("Video");
 
-                entity.Property(e => e.VideoId).ValueGeneratedNever();
-
                 entity.HasOne(d => d.Pt)
                     .WithMany(p => p.Videos)
                     .HasForeignKey(d => d.PtId)

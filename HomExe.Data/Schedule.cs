@@ -6,7 +6,7 @@ namespace HomExe.Data
     public partial class Schedule
     {
         public int ScheduleId { get; set; }
-        public string Date { get; set; }
+        public string Date { get; set; } = null!;
         public int PtId { get; set; }
 
         public virtual Pt ScheduleNavigation { get; set; } = null!;
