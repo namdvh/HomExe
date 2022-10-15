@@ -8,6 +8,7 @@ namespace HomExe.Data
         public int VideoId { get; set; }
         public int PtId { get; set; }
         public string Link { get; set; } = null!;
+
         public virtual Pt Pt { get; set; } = null!;
     }
 }
