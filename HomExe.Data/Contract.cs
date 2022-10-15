@@ -11,6 +11,7 @@ namespace HomExe.Data
         public string CreatedDate { get; set; } = null!;
         public string EndDate { get; set; } = null!;
         public string Status { get; set; } = null!;
+        public int? Schedule { get; set; }
 
         public virtual Pt Pt { get; set; } = null!;
         public virtual User User { get; set; } = null!;
