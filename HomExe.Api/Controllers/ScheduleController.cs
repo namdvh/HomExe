@@ -18,7 +18,7 @@ namespace HomExe.Api.Controllers
         }
 
         //[Route("{userId}")]
-        [HttpGet("user")]
+        [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetScheduleForUser(int userId)
         {
             BaseResponse<Data.Enumerables.Schedule> response = new();
@@ -42,7 +42,7 @@ namespace HomExe.Api.Controllers
         }
 
         //[Route("{ptId}")]
-        [HttpGet("pt")]
+        [HttpGet("pt/{ptId}")]
         public async Task<IActionResult> GetScheduleForPt(int ptId)
         {
             BaseResponse<List<Data.Enumerables.Schedule>> response = new();
