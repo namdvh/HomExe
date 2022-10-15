@@ -90,8 +90,6 @@ namespace HomExe.Data
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
-                entity.Property(e => e.LinkMeet).HasMaxLength(50);
-
                 entity.Property(e => e.Password).HasMaxLength(50);
 
                 entity.Property(e => e.Phone).HasColumnType("decimal(18, 0)");
