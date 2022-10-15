@@ -8,7 +8,8 @@ namespace HomExe.Data
         public int UserId { get; set; }
         public string Problems { get; set; } = null!;
         public string Target { get; set; } = null!;
+        public int HealthId { get; set; }
 
-        public virtual User? User { get; set; }
+        public virtual User User { get; set; } = null!;
     }
 }
