@@ -121,8 +121,16 @@ namespace HomExe.Api.Controllers
             {
                 return BadRequest();
             }
-            _context.Entry(rp).State = EntityState.Modified;
-
+            var x = await _context.HealthReports.FirstOrDefaultAsync(x => x.HealthId == id);
+            if (x == null)
+            {
+                response.Code = "202";
+                response.Message = "Not found that Report";
+                return Ok(response);
+            }
+            x.Problems = rp.Problems;
+            x.Target = rp.Target;
+            _context.HealthReports.Update(x);
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {

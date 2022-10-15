@@ -1,4 +1,5 @@
 ﻿using HomExe.Data;
+using HomExe.ViewModels;
 using HomExe.ViewModels.BaseResponse;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -72,17 +73,19 @@ namespace HomExe.Api.Controllers
         
 
         // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int ptId,[FromBody] Schedule sche)
+        [HttpPut("{ptId}")]
+        public async Task<IActionResult> Put(int ptId, ScheduleDTO sche)
         {
             BaseResponse<string> response = new();
-
-            if (ptId != sche.PtId)
+            var x =await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == ptId);
+            if (x == null)
             {
-                return BadRequest();
+                response.Code = "202";
+                response.Message = "Not found that Schedule";
+                return Ok(response);
             }
-            _context.Entry(sche).State = EntityState.Modified;
-
+            x.Date = sche.Date;
+            _context.Schedules.Update(x);
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
@@ -97,7 +100,6 @@ namespace HomExe.Api.Controllers
             return Ok(response);
 
         }
-
         
     }
 }

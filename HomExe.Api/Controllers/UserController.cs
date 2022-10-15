@@ -172,7 +172,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,[FromBody] User us)
+        public async Task<IActionResult> Put(int id,[FromBody] UserRequestDTO us)
         {
             BaseResponse<string> response = new();
 
@@ -180,17 +180,31 @@ namespace HomExe.Api.Controllers
             {
                 return BadRequest();
             }
-            _context.Entry(us).State = EntityState.Modified;
+            var x = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            if (x == null)
+            {
+                response.Code = "202";
+                response.Message = "Not found that Users";
+                return Ok(response);
+            }
+            x.UserName = us.UserName;
+            x.Password = us.Password;
+            x.Status = us.Status;
+            x.Email = us.Email;
+            x.Weight = us.Weight;
+            x.Height = us.Height;
+            x.Phone = us.Phone;
+            _context.Users.Update(x);
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
             {
                 response.Code = "200";
-                response.Message = "Edit recipe successfully";
+                response.Message = "Edit user successfully";
             }
             else
             {
                 response.Code = "201";
-                response.Message = "Edit recipe failed";
+                response.Message = "Edit user failed";
             }
             return Ok(response);
 
