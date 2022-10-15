@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HomExe.Data\HomExe.Data.csproj" />
+  </ItemGroup>
+
 </Project>
