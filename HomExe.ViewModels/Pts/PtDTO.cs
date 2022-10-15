@@ -16,6 +16,6 @@ namespace HomExe.ViewModels.Pts
         public int CategoryId { get; set; }
         public string LinkMeet { get; set; }
         public string Status { get; set; }
-        public string Schedule { get; set; }
+        public string? Schedule { get; set; }
     }
 }

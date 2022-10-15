@@ -12,6 +12,5 @@ namespace HomExe.ViewModels.Contracts
         public int PtId { get; set; }
         public string CreatedDate { get; set; } 
         public string EndDate { get; set; }
-        public string Status { get; set; } 
     }
 }

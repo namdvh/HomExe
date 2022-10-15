@@ -79,7 +79,7 @@ namespace HomExe.Api.Controllers
             }
             else
             {         
-                var con = await _context.Contracts.Where(x => x.UserId == us.UserId).FirstOrDefaultAsync();
+                var con = await _context.Contracts.Where(x => x.UserId == us.UserId && !x.Status.Equals("0")).FirstOrDefaultAsync();
                 var now = DateTime.Now.ToString("MM/dd/yyyy");
                 if (us.RoleId == 1 && con != null && DateTime.Parse(con.EndDate).ToString("MM/dd/yyyy").Equals(now))
                 {
@@ -107,7 +107,7 @@ namespace HomExe.Api.Controllers
             }
             else
             {         
-                var cons = await _context.Contracts.Where(x => x.PtId == pt.PtId).ToListAsync();
+                var cons = await _context.Contracts.Where(x => x.PtId == pt.PtId && !x.Status.Equals("0")).ToListAsync();
                 if (cons.Count > 0)
                 {
                     var now = DateTime.Now.ToString("MM/dd/yyyy");

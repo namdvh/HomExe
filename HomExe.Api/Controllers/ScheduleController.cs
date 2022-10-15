@@ -25,8 +25,8 @@ namespace HomExe.Api.Controllers
             var sche = await (from con in _context.Contracts
                         join pt in _context.Pts on con.PtId equals pt.PtId
                         join schedule in _context.Schedules on pt.PtId equals schedule.PtId
-                        where con.UserId == userId
-                        select schedule).FirstOrDefaultAsync();
+                        where con.UserId == userId && !con.Status.Equals("0")
+                              select schedule).FirstOrDefaultAsync();
 
             if(sche != null)
             {

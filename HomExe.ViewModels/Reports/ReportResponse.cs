@@ -11,5 +11,6 @@ namespace HomExe.ViewModels.Reports
     {
         public HealthReport HealthReport { get; set; }
         public List<Video>? Videos { get; set; }
+
     }
 }

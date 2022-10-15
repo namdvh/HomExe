@@ -94,7 +94,7 @@ namespace HomExe.Api.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Recipee rec)
+        public async Task<IActionResult> Put(int id, [FromBody] RecipeDTO rec)
         {
             BaseResponse<string> response = new();
 
@@ -102,7 +102,12 @@ namespace HomExe.Api.Controllers
             {
                 return BadRequest();
             }
-            _context.Entry(rec).State = EntityState.Modified;
+            var recipe = await _context.Recipees.FirstOrDefaultAsync(x => x.RecipeId == id);
+            recipe.Pictures = rec.Pictures;
+            recipe.Recipe = rec.Recipe;
+            recipe.CategoryId = rec.CategoryId;
+
+            _context.Recipees.Update(recipe);
 
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)

@@ -102,7 +102,7 @@ namespace HomExe.Api.Controllers
 
             var pt = await (from con in _context.Contracts
                             join _pt in _context.Pts on con.PtId equals _pt.PtId
-                            where con.UserId == userId
+                            where con.UserId == userId && !con.Status.Equals("0")
                             select _pt).FirstOrDefaultAsync();
 
             if (pt != null)
@@ -179,9 +179,8 @@ namespace HomExe.Api.Controllers
 
         }
 
-        // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,[FromBody] Pt pt)
+        public async Task<IActionResult> Put(int id,[FromBody] PtDTO pt)
         {
             BaseResponse<string> response = new();
 
@@ -189,7 +188,16 @@ namespace HomExe.Api.Controllers
             {
                 return BadRequest();
             }
-            _context.Entry(pt).State = EntityState.Modified;
+
+            var _pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == id);
+            _pt.Email = pt.Email;
+            _pt.UserName = pt.UserName;
+            _pt.Status = pt.Status;
+            _pt.CategoryId = pt.CategoryId;
+            _pt.LinkMeet = pt.LinkMeet;
+            _pt.Phone = pt.Phone;
+
+            _context.Pts.Update(_pt);
 
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)

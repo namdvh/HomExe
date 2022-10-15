@@ -17,7 +17,7 @@ namespace HomExe.Api.Controllers
             _context = context;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("user")]
         public async Task<IActionResult> Get(int userId)
         {
             BaseResponse<ReportResponse> response = new();
@@ -40,6 +40,39 @@ namespace HomExe.Api.Controllers
                 res.HealthReport = rp;
                 res.Videos = videoList;
                 response.Data = res;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "Get health report failed";
+            }
+
+
+            return Ok(response);
+        }
+        
+        [HttpGet("pt")]
+        public async Task<IActionResult> GetReportForPt(int ptId)
+        {
+            BaseResponse<List<HealthReport>> response = new();
+
+
+            var cons = await _context.Contracts.Where(x => x.PtId == ptId && !x.Status.Equals("0")).ToListAsync();
+            var reportList = new List<HealthReport>();
+            foreach (var item in cons)
+            {
+                var rp = await _context.HealthReports.FirstOrDefaultAsync(x => x.UserId == item.UserId);
+                var us = await _context.Users.FirstOrDefaultAsync(x => x.UserId == item.UserId);
+                reportList.Add(rp);
+            }
+            
+            if (reportList.Count > 0)
+            {
+                
+                
+                response.Code = "200";
+                response.Message = "Get health report successfully";
+                response.Data = reportList;
             }
             else
             {
