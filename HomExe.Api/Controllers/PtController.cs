@@ -181,8 +181,8 @@ namespace HomExe.Api.Controllers
                 Address = request.Address,
                 Certificate = request.Certificate,
                 FullName = request.FullName,
-                Schedules = request.Schedule
-
+                Schedules = request.Schedule,
+                RoleId = 3
             };
 
             _context.Pts.Add(pt);

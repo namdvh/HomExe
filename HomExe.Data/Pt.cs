@@ -26,8 +26,10 @@ namespace HomExe.Data
         public string? Certificate { get; set; }
         public string? Address { get; set; }
         public string? Schedules { get; set; }
+        public int RoleId { get; set; }
 
         public virtual PtCategory Category { get; set; } = null!;
+        public virtual Role Role { get; set; } = null!;
         public virtual ICollection<Contract> Contracts { get; set; }
         public virtual ICollection<Video> Videos { get; set; }
     }

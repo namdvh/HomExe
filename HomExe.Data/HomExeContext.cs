@@ -104,6 +104,12 @@ namespace HomExe.Data
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PT_PtCategory");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Pts)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_PT_Role");
             });
 
             modelBuilder.Entity<PtCategory>(entity =>

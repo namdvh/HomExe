@@ -29,7 +29,7 @@ namespace HomExe.Api.Controllers
             {
                 response.Code = "200";
                 response.Message = " Get schedule for user successfully";
-                response.Data = con.Schedule;
+                response.Data = (Data.Enumerables.Schedule)con.Schedule;
             }
             else
             {
@@ -54,7 +54,7 @@ namespace HomExe.Api.Controllers
                 var scheduleList = new List<Data.Enumerables.Schedule>();
                 foreach (var item in cons)
                 {
-                    scheduleList.Add(item.Schedule);
+                    scheduleList.Add((Data.Enumerables.Schedule)item.Schedule);
                 }
                 response.Code = "200";
                 response.Message = " Get schedule for pt successfully";
