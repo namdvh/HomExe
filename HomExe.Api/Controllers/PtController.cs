@@ -37,6 +37,7 @@ namespace HomExe.Api.Controllers
                     CategoryId = pt.CategoryId,
                     LinkMeet = pt.LinkMeet,
                     Status = pt.Status,
+                    FullName = pt.FullName,
                     Schedule = sche.Date
                         };
                 ptDTOs.Add(dto);
@@ -78,6 +79,7 @@ namespace HomExe.Api.Controllers
                     CategoryId = pt.CategoryId,
                     LinkMeet = pt.LinkMeet,
                     Status = pt.Status,
+                    FullName = pt.FullName,
                     Schedule = sche.Date
                 };
                 response.Code = "200";
@@ -117,6 +119,7 @@ namespace HomExe.Api.Controllers
                     Password = pt.Password,
                     Phone = pt.Phone,
                     CategoryId = pt.CategoryId,
+                    FullName = pt.FullName,
                     LinkMeet = pt.LinkMeet,
                     Status = pt.Status,
                     Schedule = sche.Date
@@ -151,6 +154,7 @@ namespace HomExe.Api.Controllers
                 CategoryId = request.CategoryId,
                 LinkMeet = request.LinkMeet,
                 UserName = request.UserName,
+                FullName = request.FullName,
                 Status = request.Status 
             };
 
@@ -195,6 +199,7 @@ namespace HomExe.Api.Controllers
             _pt.Status = pt.Status;
             _pt.CategoryId = pt.CategoryId;
             _pt.LinkMeet = pt.LinkMeet;
+            _pt.FullName = pt.FullName;
             _pt.Phone = pt.Phone;
 
             _context.Pts.Update(_pt);
