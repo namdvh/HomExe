@@ -10,7 +10,6 @@ namespace HomExe.ViewModels.Reports
     {
         public int UserId { get; set; }
         public string Problems { get; set; } 
-        public string Target { get; set; } 
         public int? HealthId { get; set; }
     }
 }

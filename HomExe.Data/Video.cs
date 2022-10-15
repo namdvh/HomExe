@@ -9,7 +9,6 @@ namespace HomExe.Data
         public int PtId { get; set; }
         public int ProblemId { get; set; }
         public string Link { get; set; } = null!;
-
         public virtual Pt Pt { get; set; } = null!;
     }
 }

@@ -20,26 +20,16 @@ namespace HomExe.Api.Controllers
         [HttpGet("user")]
         public async Task<IActionResult> Get(int userId)
         {
-            BaseResponse<ReportResponse> response = new();
+            BaseResponse<HealthReport> response = new();
 
 
             var rp = await _context.HealthReports.FirstOrDefaultAsync(x => x.UserId == userId);
             
             if (rp != null)
             {
-                var videoList = new List<Video>();
-                var problems = rp.Problems.Split(',').ToList();
-                foreach (var item in problems)
-                {
-                    var video = await _context.Videos.FirstOrDefaultAsync(x => x.ProblemId == Int32.Parse(item));
-                    videoList.Add(video);
-                }
                 response.Code = "200";
                 response.Message = "Get health report successfully";
-                ReportResponse res = new();
-                res.HealthReport = rp;
-                res.Videos = videoList;
-                response.Data = res;
+                response.Data = rp;
             }
             else
             {
@@ -92,8 +82,7 @@ namespace HomExe.Api.Controllers
             var rp = new HealthReport
             {
                 UserId = request.UserId,
-                Problems = request.Problems,
-                Target = request.Target
+                Problems = request.Problems
             };
 
             _context.HealthReports.Add(rp);
@@ -129,7 +118,6 @@ namespace HomExe.Api.Controllers
                 return Ok(response);
             }
             x.Problems = rp.Problems;
-            x.Target = rp.Target;
             _context.HealthReports.Update(x);
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
