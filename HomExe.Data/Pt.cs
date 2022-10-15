@@ -20,6 +20,8 @@ namespace HomExe.Data
         public string LinkMeet { get; set; } = null!;
         public string Status { get; set; } = null!;
         public string? FullName { get; set; }
+        public string? StartDate { get; set; }
+        public string? EndDate { get; set; }
 
         public virtual PtCategory Category { get; set; } = null!;
         public virtual Schedule? Schedule { get; set; }

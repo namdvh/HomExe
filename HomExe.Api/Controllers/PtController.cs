@@ -1,8 +1,13 @@
-﻿using HomExe.Data;
+﻿using Azure.Core;
+using Azure.Identity;
+using HomExe.Data;
 using HomExe.ViewModels.BaseResponse;
 using HomExe.ViewModels.Pts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph;
+using Microsoft.Identity.Client;
+using System.Net.Http.Headers;
 
 namespace HomExe.Api.Controllers
 {
@@ -28,7 +33,8 @@ namespace HomExe.Api.Controllers
             foreach (var pt in ptList)
             {
                 var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == pt.PtId);
-                var dto = new PtDTO{
+                var dto = new PtDTO
+                {
                     PtId = pt.PtId,
                     Email = pt.Email,
                     UserName = pt.UserName,
@@ -39,11 +45,11 @@ namespace HomExe.Api.Controllers
                     Status = pt.Status,
                     FullName = pt.FullName,
                     Schedule = sche.Date
-                        };
+                };
                 ptDTOs.Add(dto);
 
             }
-            if(ptDTOs.Count > 0)
+            if (ptDTOs.Count > 0)
             {
                 response.Code = "200";
                 response.Message = "Get list pts successfully";
@@ -67,7 +73,7 @@ namespace HomExe.Api.Controllers
 
             var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == ptId);
             var sche = await _context.Schedules.FirstOrDefaultAsync(x => x.PtId == ptId);
-            if(pt != null && sche != null)
+            if (pt != null && sche != null)
             {
                 var dto = new PtDTO
                 {
@@ -95,7 +101,7 @@ namespace HomExe.Api.Controllers
 
             return Ok(response);
         }
-        
+
         //[Route("{userId}")]
         [HttpGet("user")]
         public async Task<IActionResult> GetPtForUser(int userId)
@@ -141,8 +147,32 @@ namespace HomExe.Api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]PtDTO request)
+        public async Task<IActionResult> Create([FromBody] PtDTO request)
         {
+            var scopes = new[] { "https://graph.microsoft.com/.default" };
+            var tenantId = "9b1ab0a1-9c14-4f05-9600-7c6db921abdb";
+            var clientId = "f165b596-446c-4a29-9040-02476ad6c0c3";
+            var authority = "https://login.microsoftonline.com";
+            var redirectUrl = "https://localhost:5000";
+            var clientSecret = "wd88Q~4Fkjsd1a_f.NtNEr394rngmn9kMYIv4dya";
+            var options = new TokenCredentialOptions
+            {
+                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
+            };
+            IConfidentialClientApplication app = ConfidentialClientApplicationBuilder
+              .Create(clientId)
+              .WithRedirectUri(redirectUrl)
+              .WithClientSecret(clientSecret)
+              //.WithAuthority(authority)
+              .Build();
+            var authenResult = await app.AcquireTokenByAuthorizationCode(scopes, clientId).ExecuteAsync();
+            GraphServiceClient graphServiceClient = new GraphServiceClient(new DelegateAuthenticationProvider(
+                async (request) =>
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authenResult.AccessToken);
+                    await Task.Yield();
+                }
+                ));
 
             BaseResponse<string> response = new();
 
@@ -154,14 +184,13 @@ namespace HomExe.Api.Controllers
                 CategoryId = request.CategoryId,
                 LinkMeet = request.LinkMeet,
                 UserName = request.UserName,
-                FullName = request.FullName,
-                Status = request.Status 
+                Status = request.Status
             };
 
             _context.Pts.Add(pt);
             var rs = await _context.SaveChangesAsync();
 
-            var sche = new Schedule
+            var sche = new HomExe.Data.Schedule
             {
                 Date = request.Schedule,
                 PtId = pt.PtId
@@ -173,18 +202,25 @@ namespace HomExe.Api.Controllers
             {
                 response.Code = "200";
                 response.Message = "Create pt successfully";
+                var onlineMeeting = new OnlineMeeting
+                {
+                    StartDateTime = DateTimeOffset.Now,
+                    EndDateTime = DateTimeOffset.Parse("2022-12-12T22:00:34.2464912+00:00"),
+                    Subject = "User Token Meeting"
+                };
+                await graphServiceClient.Me.OnlineMeetings.Request().AddAsync(onlineMeeting);
             }
             else
             {
                 response.Code = "201";
-                response.Message = "Create pt failed"; 
+                response.Message = "Create pt failed";
             }
             return Ok(response);
 
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,[FromBody] PtDTO pt)
+        public async Task<IActionResult> Put(int id, [FromBody] PtDTO pt)
         {
             BaseResponse<string> response = new();
 

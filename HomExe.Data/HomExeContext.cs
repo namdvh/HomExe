@@ -90,9 +90,13 @@ namespace HomExe.Data
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
+                entity.Property(e => e.EndDate).HasMaxLength(100);
+
                 entity.Property(e => e.Password).HasMaxLength(50);
 
                 entity.Property(e => e.Phone).HasColumnType("decimal(18, 0)");
+
+                entity.Property(e => e.StartDate).HasMaxLength(100);
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
