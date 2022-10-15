@@ -17,6 +17,11 @@ namespace HomExe.ViewModels.Pts
         public string LinkMeet { get; set; }
         public string Status { get; set; }
         public string FullName { get; set; }
+        public string Dob { get; set; }
+        public int Rating { get; set; }
+        public string Cover { get; set; }
+        public string Certificate { get; set; }
+        public string Address { get; set; }
         public string? Schedule { get; set; }
     }
 }

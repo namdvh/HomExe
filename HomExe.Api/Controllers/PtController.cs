@@ -44,6 +44,11 @@ namespace HomExe.Api.Controllers
                     LinkMeet = pt.LinkMeet,
                     Status = pt.Status,
                     FullName = pt.FullName,
+                    Address = pt.Address,
+                    Certificate = pt.Certificate,
+                    Cover = pt.Cover,
+                    Dob = pt.Dob,
+                    Rating = (int)pt.Rating,
                     Schedule = sche.Date
                 };
                 ptDTOs.Add(dto);
@@ -86,6 +91,11 @@ namespace HomExe.Api.Controllers
                     LinkMeet = pt.LinkMeet,
                     Status = pt.Status,
                     FullName = pt.FullName,
+                    Address = pt.Address,
+                    Certificate = pt.Certificate,
+                    Cover = pt.Cover,
+                    Dob = pt.Dob,
+                    Rating = (int)pt.Rating,
                     Schedule = sche.Date
                 };
                 response.Code = "200";
@@ -128,6 +138,11 @@ namespace HomExe.Api.Controllers
                     FullName = pt.FullName,
                     LinkMeet = pt.LinkMeet,
                     Status = pt.Status,
+                    Address = pt.Address,
+                    Certificate = pt.Certificate,
+                    Cover = pt.Cover,
+                    Dob = pt.Dob,
+                    Rating = (int)pt.Rating,
                     Schedule = sche.Date
                 };
 
@@ -160,7 +175,15 @@ namespace HomExe.Api.Controllers
                 CategoryId = request.CategoryId,
                 LinkMeet = request.LinkMeet,
                 UserName = request.UserName,
-                Status = request.Status
+                Status = request.Status,
+                Cover = request.Cover,
+                Rating = request.Rating,
+                Dob=request.Dob,
+                Address=request.Address,
+                Certificate=request.Certificate,
+                FullName = request.FullName,
+                
+                
             };
 
             _context.Pts.Add(pt);
@@ -205,6 +228,11 @@ namespace HomExe.Api.Controllers
             _pt.CategoryId = pt.CategoryId;
             _pt.LinkMeet = pt.LinkMeet;
             _pt.FullName = pt.FullName;
+            pt.Address = pt.Address;
+            pt.Certificate = pt.Certificate;
+            pt.Cover = pt.Cover;
+            pt.Dob = pt.Dob;
+            pt.Rating = pt.Rating;
             _pt.Phone = pt.Phone;
 
             _context.Pts.Update(_pt);
