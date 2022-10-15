@@ -23,5 +23,6 @@ namespace HomExe.ViewModels.Pts
         public string Certificate { get; set; }
         public string Address { get; set; }
         public string? Schedule { get; set; }
+
     }
 }

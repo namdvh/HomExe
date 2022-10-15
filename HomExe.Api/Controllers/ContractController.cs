@@ -125,6 +125,7 @@ namespace HomExe.Api.Controllers
                     PtId = request.PtId,
                     CreatedDate = request.CreatedDate,
                     EndDate = request.EndDate,
+                    Schedule = (Data.Enumerables.Schedule)request.Schedule,
                     Status = "0"
                 };
 
