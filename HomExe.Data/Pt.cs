@@ -25,9 +25,9 @@ namespace HomExe.Data
         public string? Cover { get; set; }
         public string? Certificate { get; set; }
         public string? Address { get; set; }
+        public int? Schedule { get; set; }
 
         public virtual PtCategory Category { get; set; } = null!;
-        public virtual Schedule? Schedule { get; set; }
         public virtual ICollection<Contract> Contracts { get; set; }
         public virtual ICollection<Video> Videos { get; set; }
     }

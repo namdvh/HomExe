@@ -23,7 +23,6 @@ namespace HomExe.Data
         public virtual DbSet<Recipee> Recipees { get; set; } = null!;
         public virtual DbSet<RecipeeCategory> RecipeeCategories { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
-        public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Video> Videos { get; set; } = null!;
 
@@ -149,21 +148,6 @@ namespace HomExe.Data
                 entity.Property(e => e.Role1)
                     .HasMaxLength(50)
                     .HasColumnName("Role");
-            });
-
-            modelBuilder.Entity<Schedule>(entity =>
-            {
-                entity.ToTable("Schedule");
-
-                entity.Property(e => e.ScheduleId).ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Date).HasMaxLength(50);
-
-                entity.HasOne(d => d.ScheduleNavigation)
-                    .WithOne(p => p.Schedule)
-                    .HasForeignKey<Schedule>(d => d.ScheduleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Schedule_PT1");
             });
 
             modelBuilder.Entity<User>(entity =>
