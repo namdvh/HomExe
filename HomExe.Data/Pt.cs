@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace HomExe.Data
 {
-    public class Pt
+    public partial class Pt
     {
         public Pt()
         {
             Contracts = new HashSet<Contract>();
+            Videos = new HashSet<Video>();
         }
 
         public int PtId { get; set; }
@@ -22,5 +23,6 @@ namespace HomExe.Data
         public virtual PtCategory Category { get; set; } = null!;
         public virtual Schedule? Schedule { get; set; }
         public virtual ICollection<Contract> Contracts { get; set; }
+        public virtual ICollection<Video> Videos { get; set; }
     }
 }

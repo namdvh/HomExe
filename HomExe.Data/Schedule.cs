@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomExe.Data
 {
-    public class Schedule
+    public partial class Schedule
     {
         public int ScheduleId { get; set; }
         public string Date { get; set; } = null!;

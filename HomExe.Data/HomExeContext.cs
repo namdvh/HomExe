@@ -17,6 +17,7 @@ namespace HomExe.Data
         }
 
         public virtual DbSet<Contract> Contracts { get; set; } = null!;
+        public virtual DbSet<HealthReport> HealthReports { get; set; } = null!;
         public virtual DbSet<Pt> Pts { get; set; } = null!;
         public virtual DbSet<PtCategory> PtCategories { get; set; } = null!;
         public virtual DbSet<Recipee> Recipees { get; set; } = null!;
@@ -24,13 +25,14 @@ namespace HomExe.Data
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Video> Videos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=bakeryrecipe.database.windows.net;Initial Catalog=HomExe;uid=bakeryrecipe;pwd=Admin@123;MultipleActiveResultSets=True;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-GFSC70P;Initial Catalog=HomExe;uid=sa;pwd=1;MultipleActiveResultSets=True;");
             }
         }
 
@@ -38,11 +40,9 @@ namespace HomExe.Data
         {
             modelBuilder.Entity<Contract>(entity =>
             {
-                entity.HasKey(e => e.UserId);
-
                 entity.ToTable("Contract");
 
-                entity.Property(e => e.UserId).ValueGeneratedNever();
+                entity.Property(e => e.ContractId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.CreatedDate)
                     .HasMaxLength(50)
@@ -54,17 +54,26 @@ namespace HomExe.Data
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
+                entity.HasOne(d => d.ContractNavigation)
+                    .WithOne(p => p.Contract)
+                    .HasForeignKey<Contract>(d => d.ContractId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Contract_User1");
+
                 entity.HasOne(d => d.Pt)
                     .WithMany(p => p.Contracts)
                     .HasForeignKey(d => d.PtId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Contract_PT");
+            });
 
-                entity.HasOne(d => d.User)
-                    .WithOne(p => p.Contract)
-                    .HasForeignKey<Contract>(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Contract_User1");
+            modelBuilder.Entity<HealthReport>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+
+                entity.ToTable("HealthReport");
+
+                entity.Property(e => e.UserId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<Pt>(entity =>
@@ -153,6 +162,8 @@ namespace HomExe.Data
             {
                 entity.ToTable("User");
 
+                entity.Property(e => e.UserId).ValueGeneratedOnAdd();
+
                 entity.Property(e => e.Email).HasMaxLength(50);
 
                 entity.Property(e => e.Height).HasMaxLength(50);
@@ -172,6 +183,25 @@ namespace HomExe.Data
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Role");
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithOne(p => p.User)
+                    .HasForeignKey<User>(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_User_HealthReport");
+            });
+
+            modelBuilder.Entity<Video>(entity =>
+            {
+                entity.ToTable("Video");
+
+                entity.Property(e => e.VideoId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Pt)
+                    .WithMany(p => p.Videos)
+                    .HasForeignKey(d => d.PtId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Video_PT");
             });
 
             OnModelCreatingPartial(modelBuilder);

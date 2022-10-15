@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HomExe.Data
 {
-    public class User
+    public partial class User
     {
         public int UserId { get; set; }
         public string Email { get; set; } = null!;
@@ -16,6 +16,7 @@ namespace HomExe.Data
         public int RoleId { get; set; }
 
         public virtual Role Role { get; set; } = null!;
+        public virtual HealthReport UserNavigation { get; set; } = null!;
         public virtual Contract? Contract { get; set; }
     }
 }
