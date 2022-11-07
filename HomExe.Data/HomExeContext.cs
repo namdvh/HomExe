@@ -162,6 +162,8 @@ namespace HomExe.Data
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
+                entity.Property(e => e.FullName).HasMaxLength(50);
+
                 entity.Property(e => e.Height).HasMaxLength(50);
 
                 entity.Property(e => e.Password).HasMaxLength(50);
@@ -173,12 +175,6 @@ namespace HomExe.Data
                 entity.Property(e => e.UserName).HasMaxLength(50);
 
                 entity.Property(e => e.Weight).HasMaxLength(50);
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_User_Role");
             });
 
             modelBuilder.Entity<Video>(entity =>

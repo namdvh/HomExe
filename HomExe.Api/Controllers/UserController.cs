@@ -183,6 +183,7 @@ namespace HomExe.Api.Controllers
             }
             x.UserName = us.UserName;
             x.Password = us.Password;
+            x.FullName = us.FullName;
             x.Status = us.Status;
             x.Email = us.Email;
             x.Weight = us.Weight;

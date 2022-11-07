@@ -19,8 +19,8 @@ namespace HomExe.Data
         public string? Weight { get; set; }
         public string Status { get; set; } = null!;
         public int RoleId { get; set; }
+        public string? FullName { get; set; }
 
-        public virtual Role Role { get; set; } = null!;
         public virtual Contract? Contract { get; set; }
         public virtual ICollection<HealthReport> HealthReports { get; set; }
     }

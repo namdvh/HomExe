@@ -126,7 +126,7 @@ namespace HomExe.Api.Controllers
                     CreatedDate = request.CreatedDate,
                     EndDate = request.EndDate,
                     Schedule = request.Schedule,
-                    Status = "0"
+                    Status = "1"
                 };
 
                 _context.Contracts.Add(con);

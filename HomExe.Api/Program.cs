@@ -16,7 +16,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:3000")
+                          policy.WithOrigins("https://localhost:3000", "https://homexe-ccs50pin0-zhangliejunjie.vercel.app")
+
+
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();

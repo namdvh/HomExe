@@ -8,7 +8,7 @@ namespace HomExe.Data.Enumerables
 {
     public enum Schedule
     {
-        _T2_T5_1=1,
+        _T2_T5_1,
         _T2_T5_2,
         _T2_T5_3,
         _T2_T5_4,
