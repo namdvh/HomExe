@@ -23,7 +23,7 @@ namespace HomExe.Api.Controllers
         {
             BaseResponse<Data.Enumerables.Schedule> response = new();
 
-            var con = await _context.Contracts.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+            var con = await _context.Contracts.Where(x => x.UserId == userId && !x.Status.Equals("0")).FirstOrDefaultAsync();
 
             if (con != null)
             {
@@ -47,7 +47,7 @@ namespace HomExe.Api.Controllers
         {
             BaseResponse<List<Data.Enumerables.Schedule>> response = new();
 
-            var cons = await _context.Contracts.Where(x => x.PtId == ptId).ToListAsync();
+            var cons = await _context.Contracts.Where(x => x.PtId == ptId && !x.Status.Equals("0")).ToListAsync();
 
             if (cons.Count > 0)
             {
@@ -69,6 +69,7 @@ namespace HomExe.Api.Controllers
 
             return Ok(response);
         }
+        
 
     }
 }

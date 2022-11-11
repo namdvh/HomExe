@@ -89,10 +89,13 @@ namespace HomExe.Api.Controllers
             if (conList.Count > 0)
             {
                 var userList = new List<User>();
+                var ptList = new List<Pt>();
                 foreach (var con in conList)
                 {
                     var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == con.UserId);
                     userList.Add(user);
+                    var pt = await _context.Pts.FirstOrDefaultAsync(x => x.PtId == con.PtId);
+                    ptList.Add(pt);
 
                 }
                 response.Code = "200";
@@ -126,7 +129,7 @@ namespace HomExe.Api.Controllers
                     CreatedDate = request.CreatedDate,
                     EndDate = request.EndDate,
                     Schedule = request.Schedule,
-                    Status = "1"
+                    Status = "0"
                 };
 
                 _context.Contracts.Add(con);
@@ -152,7 +155,7 @@ namespace HomExe.Api.Controllers
             return Ok(response);         
         }
 
-        [HttpPut()]
+        [HttpPut("{contractId}")]
         public async Task<IActionResult> ConfirmContract(int contractId)
         {
             BaseResponse<string> response = new();

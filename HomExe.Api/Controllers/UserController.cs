@@ -136,11 +136,12 @@ namespace HomExe.Api.Controllers
                     Email = user.Email,
                     UserName = user.UserName,
                     Password = user.Password,
-                    Phone = user.Phone,
-                    Height = user.Height,
-                    Weight = user.Weight,
-                    Status = user.Status,
-                    RoleId = 1
+                    Phone = user?.Phone,
+                    Height = user?.Height,
+                    Weight = user?.Weight,
+                    Status = "1",
+                    RoleId = 1,
+                    FullName = user.FirstName + " " + user.LastName
                 };
 
                 _context.Users.Add(us);

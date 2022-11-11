@@ -111,6 +111,30 @@ namespace HomExe.Api.Controllers
 
             return Ok(response);
         }
+        [HttpGet("category")]
+        public async Task<IActionResult> GetCategory()
+        {
+            BaseResponse<List<PtCategory>> response = new();
+
+
+            var category = await _context.PtCategories.ToListAsync();
+
+            if (category.Count > 0)
+            {
+               
+                response.Code = "200";
+                response.Message = "Get pt category successfully";
+                response.Data = category;
+            }
+            else
+            {
+                response.Code = "201";
+                response.Message = "Get pt category failed";
+            }
+
+
+            return Ok(response);
+        }
 
         [HttpGet("user")]
         public async Task<IActionResult> GetPtForUser(int userId)
@@ -161,7 +185,7 @@ namespace HomExe.Api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PtDTO request)
+        public async Task<IActionResult> Create([FromBody] CreatePtDTO request)
         {
 
             BaseResponse<string> response = new();
@@ -174,15 +198,12 @@ namespace HomExe.Api.Controllers
                 CategoryId = request.CategoryId,
                 LinkMeet = request.LinkMeet,
                 UserName = request.UserName,
-                Status = request.Status,
+                Status = "1",
                 Cover = request.Cover,
-                Rating = request.Rating,
                 Dob = request.Dob,
                 Address = request.Address,
-                Certificate = request.Certificate,
-                FullName = request.FullName,
-                Schedules = request.Schedule,
-                RoleId = 3
+                FullName = request.FirstName + " " + request.LastName,
+                RoleId = 2
             };
 
             _context.Pts.Add(pt);
