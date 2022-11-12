@@ -34,6 +34,7 @@ namespace HomExe.Api.Controllers
             }
             else
             {
+                response.Data = null;
                 response.Code = "201";
                 response.Message = "User do not have contract or contract is expired";
             }
@@ -162,8 +163,10 @@ namespace HomExe.Api.Controllers
 
             var contract = await _context.Contracts.FirstOrDefaultAsync(x => x.ContractId == contractId);
             contract.Status = "1";
+            contract.CreatedDate = DateTime.Now.ToString();
             //_context.Entry(contract).State = EntityState.Modified;
             _context.Entry(contract).Property(x => x.Status).IsModified = true;
+            _context.Entry(contract).Property(x => x.CreatedDate).IsModified = true;
 
             var rs = await _context.SaveChangesAsync();
             if (rs > 0)
