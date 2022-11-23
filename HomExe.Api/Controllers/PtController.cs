@@ -1,13 +1,8 @@
-﻿using Azure.Core;
-using Azure.Identity;
-using HomExe.Data;
+﻿using HomExe.Data;
 using HomExe.ViewModels.BaseResponse;
 using HomExe.ViewModels.Pts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
-using Microsoft.Identity.Client;
-using System.Net.Http.Headers;
 
 namespace HomExe.Api.Controllers
 {
